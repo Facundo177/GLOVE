@@ -19,46 +19,46 @@ using namespace std;
 #define PUL14 18   //Pulsador de tryout
 
 
-#define LED_1 22
-#define LED_2 33
-#define LED_3 23
-#define LED_4 25
-#define LED_5 27
-#define LED_6 26
-#define LED_7 14
-#define LED_8 13
-#define LED_9 12
+#define VIB1 22
+#define VIB2 33
+#define VIB3 23
+#define VIB4 25
+#define VIB5 27
+#define VIB6 26
+#define VIB7 14
+#define VIB8 13
+#define VIB9 12
 int del = 100;
 
 int pulseled[27][2] = {
   // Definimos la matriz de letras, LED y secuencia de pulsos
-  { LED_1, 1 },  //aA
-  { LED_1, 2 },  //bB
-  { LED_1, 3 },  //cC
-  { LED_2, 1 },  //dD
-  { LED_2, 2 },  //eE
-  { LED_2, 3 },  //fF
-  { LED_3, 1 },  //gG
-  { LED_3, 2 },  //hH
-  { LED_3, 3 },  //iI
-  { LED_4, 1 },  //jJ
-  { LED_4, 2 },  //kK
-  { LED_4, 3 },  //lL
-  { LED_5, 1 },  //mM
-  { LED_5, 2 },  //nN
-  { LED_5, 3 },  //ñÑ
-  { LED_6, 1 },  //oO
-  { LED_6, 2 },  //pP
-  { LED_6, 3 },  //qQ
-  { LED_7, 1 },  //rR
-  { LED_7, 2 },  //sS
-  { LED_7, 3 },  //tT
-  { LED_8, 1 },  //uU
-  { LED_8, 2 },  //vV
-  { LED_8, 3 },  //wW
-  { LED_9, 1 },  //xX
-  { LED_9, 2 },  //yY
-  { LED_9, 3 }   //zZ
+  { VIB1, 1 },  //aA
+  { VIB1, 2 },  //bB
+  { VIB1, 3 },  //cC
+  { VIB2, 1 },  //dD
+  { VIB2, 2 },  //eE
+  { VIB2, 3 },  //fF
+  { VIB3, 1 },  //gG
+  { VIB3, 2 },  //hH
+  { VIB3, 3 },  //iI
+  { VIB4, 1 },  //jJ
+  { VIB4, 2 },  //kK
+  { VIB4, 3 },  //lL
+  { VIB5, 1 },  //mM
+  { VIB5, 2 },  //nN
+  { VIB5, 3 },  //ñÑ
+  { VIB6, 1 },  //oO
+  { VIB6, 2 },  //pP
+  { VIB6, 3 },  //qQ
+  { VIB7, 1 },  //rR
+  { VIB7, 2 },  //sS
+  { VIB7, 3 },  //tT
+  { VIB8, 1 },  //uU
+  { VIB8, 2 },  //vV
+  { VIB8, 3 },  //wW
+  { VIB9, 1 },  //xX
+  { VIB9, 2 },  //yY
+  { VIB9, 3 }   //zZ
 };
 
 int puls[27][3] = {
@@ -94,15 +94,15 @@ int puls[27][3] = {
 
 void setup() {
   Serial.begin(9600);
-  pinMode(LED_1, OUTPUT);
-  pinMode(LED_2, OUTPUT);
-  pinMode(LED_3, OUTPUT);
-  pinMode(LED_4, OUTPUT);
-  pinMode(LED_5, OUTPUT);
-  pinMode(LED_6, OUTPUT);
-  pinMode(LED_7, OUTPUT);
-  pinMode(LED_8, OUTPUT);
-  pinMode(LED_9, OUTPUT);
+  pinMode(VIB1, OUTPUT);
+  pinMode(VIB2, OUTPUT);
+  pinMode(VIB3, OUTPUT);
+  pinMode(VIB4, OUTPUT);
+  pinMode(VIB5, OUTPUT);
+  pinMode(VIB6, OUTPUT);
+  pinMode(VIB7, OUTPUT);
+  pinMode(VIB8, OUTPUT);
+  pinMode(VIB9, OUTPUT);
   pinMode(PUL1, INPUT_PULLUP);
   pinMode(PUL2, INPUT_PULLUP);
   pinMode(PUL3, INPUT_PULLUP);
