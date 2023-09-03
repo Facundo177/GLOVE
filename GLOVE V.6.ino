@@ -3,32 +3,6 @@
 #include <queue>
 using namespace std;
 
-#define PUL1 3     //Pulsador de a,b,c
-#define PUL2 19    //Pulsador de d,e,f
-#define PUL3 1     //Pulsador de g,h,i
-#define PUL4 21    //Pulsador de j,k,l
-#define PUL5 17    //Pulsador de m,n,ñ
-#define PUL6 32    //Pulsador de o,p,q
-#define PUL7 16    //Pulsador de r,s,t
-#define PUL8 35    //Pulsador de u,v,w
-#define PUL9 34    //Pulsador de x,y,z
-#define PUL10 15   //Pulsador de space
-#define PUL11 2    //Pulsador de erase
-#define PUL12 4    //Pulsador de delete
-#define PUL13 5    //Pulsador de a,b,c
-#define PUL14 18   //Pulsador de tryout
-
-
-#define VIB1 22
-#define VIB2 33
-#define VIB3 23
-#define VIB4 25
-#define VIB5 27
-#define VIB6 26
-#define VIB7 14
-#define VIB8 13
-#define VIB9 12
-int del = 100;
 
 int pulseled[27][2] = {
   // Definimos la matriz de letras, LED y secuencia de pulsos
@@ -115,8 +89,6 @@ void setup() {
   pinMode(PUL10, INPUT_PULLUP);
   pinMode(PUL11, INPUT_PULLUP);
   pinMode(PUL12, INPUT_PULLUP);
-  pinMode(PUL13, INPUT_PULLUP);
-  pinMode(PUL14, INPUT_PULLUP);
 }
 
 int findletter(int numRows, int value1, int value2) {    ///funcion para encontrar letra pulsada
