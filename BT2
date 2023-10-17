@@ -1,0 +1,773 @@
+#include "BluetoothSerial.h"
+
+#define MAX_STRING_LENGTH 100
+
+//#define USE_PIN // Uncomment this to use PIN during pairing. The pin is specified on the line below
+//const char *pin = "1234"; // Change this to more secure PIN.
+String device_name = "ESP32-BT-Slave";
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+#if !defined(CONFIG_BT_SPP_ENABLED)
+#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+#endif
+
+BluetoothSerial SerialBT;
+
+
+
+int PUL1 = 36;   //Pulsador de a,b,c  ERROR
+int PUL2 = 39;   //Pulsador de d,e,f  ERROR
+int PUL5 = 34;   //Pulsador de g,h,i  ERROR
+int PUL11 = 35;   //Pulsador de j,k,l 
+int PUL3 = 32;   //Pulsador de m,n,ñ
+int PUL7 = 33;   //Pulsador de o,p,q
+int PUL8 = 25;   //Pulsador de r,s,t
+int PUL6 = 26;   //Pulsador de u,v,w  ERROR
+int PUL4 = 27;   //Pulsador de x,y,z
+int PUL10 = 14;  //Pulsador de space/send
+int PUL9 = 12;  //Pulsador de erase/delete
+int PUL12 = 13;  //Pulsador configurable
+
+int VIB1 = 23;
+int VIB2 = 22;
+int VIB3 = 21;
+int VIB4 = 19;
+int VIB5 = 18;
+int VIB6 = 5;
+int VIB7 = 17;
+int VIB8 = 16;
+int VIB9 = 4;
+
+
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin(device_name); //Bluetooth device name
+  Serial.printf("The device with name \"%s\" is started.\nNow you can pair it with Bluetooth!\n", device_name.c_str());
+
+  //Serial.printf("The device with name \"%s\" and MAC address %s is started.\nNow you can pair it with Bluetooth!\n", device_name.c_str(), SerialBT.getMacString()); // Use this after the MAC method is implemented
+  #ifdef USE_PIN
+    SerialBT.setPin(pin);
+    Serial.println("Using PIN");
+  #endif
+
+
+
+  pinMode(VIB1, OUTPUT);
+  pinMode(VIB2, OUTPUT);
+  pinMode(VIB3, OUTPUT);
+  pinMode(VIB4, OUTPUT);
+  pinMode(VIB5, OUTPUT);
+  pinMode(VIB6, OUTPUT);
+  pinMode(VIB7, OUTPUT);
+  pinMode(VIB8, OUTPUT);
+  pinMode(VIB9, OUTPUT);
+  pinMode(PUL1, INPUT_PULLUP);
+  pinMode(PUL2, INPUT_PULLUP);
+  pinMode(PUL3, INPUT_PULLUP);
+  pinMode(PUL4, INPUT_PULLUP);
+  pinMode(PUL5, INPUT_PULLUP);
+  pinMode(PUL6, INPUT_PULLUP);
+  pinMode(PUL7, INPUT_PULLUP);
+  pinMode(PUL8, INPUT_PULLUP);
+  pinMode(PUL9, INPUT_PULLUP);
+  pinMode(PUL10, INPUT_PULLUP);
+  pinMode(PUL11, INPUT_PULLUP);
+  pinMode(PUL12, INPUT_PULLUP);
+}
+
+void loop() {
+  // Lo que se escribe en el monitor serial se envía al celular   
+  if (Serial.available()) {
+    SerialBT.write(Serial.read());
+  }
+
+  char inputString[MAX_STRING_LENGTH];
+  int index = 0;
+
+  // Lo que se ecribe en el celular se separa letra por letra y se muestra en el monitor serial
+  while (SerialBT.available() && index < MAX_STRING_LENGTH - 1) {
+    // Delay to allow byte to arrive
+    delay(5);
+
+    // Read the incoming byte
+    char incomingByte = SerialBT.read();
+
+    // Add incoming byte to string
+    inputString[index] = incomingByte;
+    index++;
+  }
+
+  // Null-terminate the string
+  inputString[index] = '\0';
+
+  // If string is not empty, print each character on a new line
+  if (index > 0) {
+    for (int i = 0; i < index; i++) {
+      //Serial.println(inputString[i]);
+
+      char letra = inputString[i];
+      //int num = inputString[i];
+      //Serial.println(num);
+      
+
+      if (letra == 'a' || letra == 'A' || letra == 161 /*'á'*/ || letra == 129 /*'Á'*/) {
+        letraVibradores(1);
+      } else if (letra == 'b' || letra == 'B'){
+        letraVibradores(2);
+      } else if (letra == 'c' || letra == 'C'){
+        letraVibradores(3);
+      } else if (letra == 'd' || letra == 'D'){
+        letraVibradores(4);
+      } else if (letra == 'e' || letra == 'E' || letra == 169 /*'é'*/ || letra == 137 /*'É'*/) {
+        letraVibradores(5);
+      } else if (letra == 'f' || letra == 'F'){
+        letraVibradores(6);
+      } else if (letra == 'g' || letra == 'G'){
+        letraVibradores(7);
+      } else if (letra == 'h' || letra == 'H'){
+        letraVibradores(8);
+      } else if (letra == 'i' || letra == 'I' || letra == 173 /*'í'*/ || letra == 141 /*'Í'*/) {
+        letraVibradores(9);
+      } else if (letra == 'j' || letra == 'J'){
+        letraVibradores(10);
+      } else if (letra == 'k' || letra == 'K'){
+        letraVibradores(11);
+      } else if (letra == 'l' || letra == 'L'){
+        letraVibradores(12);
+      } else if (letra == 'm' || letra == 'M'){
+        letraVibradores(13);
+      } else if (letra == 'n' || letra == 'N'){
+        letraVibradores(14);
+      } else if (letra == 177 /*'ñ'*/ || letra == 145 /*'Ñ'*/){
+        letraVibradores(15);
+      } else if (letra == 'o' || letra == 'O' || letra == 179 /*'ó'*/ || letra == 147 /*'Ó'*/) {
+        letraVibradores(16);
+      } else if (letra == 'p' || letra == 'P'){
+        letraVibradores(17);
+      } else if (letra == 'q' || letra == 'Q'){
+        letraVibradores(18);
+      } else if (letra == 'r' || letra == 'R'){
+        letraVibradores(19);
+      } else if (letra == 's' || letra == 'S'){
+        letraVibradores(20);
+      } else if (letra == 't' || letra == 'T'){
+        letraVibradores(21);
+      } else if (letra == 'u' || letra == 'U' || letra == 186 /*'ú'*/ || letra == 154 /*'Ú'*/) {
+        letraVibradores(22);
+      } else if (letra == 'v' || letra == 'V'){
+        letraVibradores(23);
+      } else if (letra == 'w' || letra == 'W'){
+        letraVibradores(24);
+      } else if (letra == 'x' || letra == 'X'){
+        letraVibradores(25);
+      } else if (letra == 'y' || letra == 'Y'){
+        letraVibradores(26);
+      } else if (letra == 'z' || letra == 'Z'){
+        letraVibradores(27);
+      } else if (letra == 195){
+          
+      } else {
+        letraVibradores(28);  
+      }
+
+
+
+         
+    }
+    Serial.println(inputString);
+    
+  }
+
+
+
+  if (digitalRead(PUL1) == LOW) {
+    letraPulsadores(1);
+  } else if (digitalRead(PUL2) == LOW){
+    letraPulsadores(2);
+  } else if (digitalRead(PUL3) == LOW){
+    letraPulsadores(3);
+  } else if (digitalRead(PUL4) == LOW){
+    letraPulsadores(4);
+  } else if (digitalRead(PUL5) == LOW){
+    letraPulsadores(5);
+  } else if (digitalRead(PUL6) == LOW){
+    letraPulsadores(6);
+  } else if (digitalRead(PUL7) == LOW){
+    letraPulsadores(7);
+  } else if (digitalRead(PUL8) == LOW){
+    letraPulsadores(8);
+  } else if (digitalRead(PUL9) == LOW){
+    letraPulsadores(9);
+  } else if (digitalRead(PUL10) == LOW){
+    letraPulsadores(10);
+  } else if (digitalRead(PUL11) == LOW){
+    letraPulsadores(11);
+  } else if (digitalRead(PUL12) == LOW){
+    letraPulsadores(12);
+  } else {
+    Serial.println("Pulsador no presionado");
+  }
+}
+
+
+
+
+
+
+void letraVibradores(int letra){
+  switch (letra){
+  case 1:
+    Serial.print("1 ");
+    letraA();
+    break;
+  case 2:
+    Serial.print("2 ");
+    letraB();
+    break;
+  case 3:
+    Serial.print("3 ");
+    letraC();
+    break;
+  case 4:
+    Serial.print("4 ");
+    letraD();
+    break;
+  case 5:
+    Serial.print("5 ");
+    letraE();
+    break;
+  case 6:
+    Serial.print("6 ");
+    letraF();
+    break;
+  case 7:
+    Serial.print("7 ");
+    letraG();
+    break;
+  case 8:
+    Serial.print("8 ");
+    letraH();
+    break;
+  case 9:
+    Serial.print("9 ");
+    letraI();
+    break;
+  case 10:
+    Serial.print("10 ");
+    letraJ();
+    break;
+  case 11:
+    Serial.print("11 ");
+    letraK();
+    break;
+  case 12:
+    Serial.print("12 ");
+    letraL();
+    break;
+  case 13:
+    Serial.print("13 ");
+    letraM();
+    break;
+  case 14:
+    Serial.print("14 ");
+    letraN();
+    break;
+  case 15:
+    Serial.print("15 ");
+    letraNI();
+    break;
+  case 16:
+    Serial.print("16 ");
+    letraO();
+    break;
+  case 17:
+    Serial.print("17 ");
+    letraP();
+    break;
+  case 18:
+    Serial.print("18 ");
+    letraQ();
+    break;
+  case 19:
+    Serial.print("19 ");
+    letraR();
+    break;
+  case 20:
+    Serial.print("20 ");
+    letraS();
+    break;
+  case 21:
+    Serial.print("21 ");
+    letraT();
+    break;
+  case 22:
+    Serial.print("22 ");
+    letraU();
+    break;
+  case 23:
+    Serial.print("23 ");
+    letraV();
+    break;
+  case 24:
+    Serial.print("24 ");
+    letraW();
+    break;
+  case 25:
+    Serial.print("25 ");
+    letraX();
+    break;
+  case 26:
+    Serial.print("26 ");
+    letraY();
+    break;
+  case 27:
+    Serial.print("27 ");
+    letraZ();
+    break;
+  case 28:
+    Serial.print("/ ");
+    espacio();
+    break;
+  }
+}
+
+
+
+void letraPulsadores(int letra){ 
+  switch (letra){
+  case 1:
+    delay(100);
+    if (digitalRead(PUL1) == LOW) {
+      delay(100);
+      if (digitalRead(PUL1) == LOW) {
+        SerialBT.write("C");
+      } else{
+        SerialBT.write("B");
+      }
+    } else{
+      SerialBT.write("A");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 2:
+    delay(100);
+    if (digitalRead(PUL2) == LOW) {
+      delay(100);
+      if (digitalRead(PUL2) == LOW) {
+        SerialBT.write("F");
+      } else{
+        SerialBT.write("E");
+      }
+    } else{
+      SerialBT.write("D");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 3:
+    delay(100);
+    if (digitalRead(PUL3) == LOW) {
+      delay(100);
+      if (digitalRead(PUL3) == LOW) {
+        SerialBT.write("I");
+      } else{
+        SerialBT.write("H");
+      }
+    } else{
+      SerialBT.write("G");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 4:
+    delay(100);
+    if (digitalRead(PUL4) == LOW) {
+      delay(100);
+      if (digitalRead(PUL4) == LOW) {
+        SerialBT.write("L");
+      } else{
+        SerialBT.write("K");
+      }
+    } else{
+      SerialBT.write("J");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 5:
+    delay(100);
+    if (digitalRead(PUL5) == LOW) {
+      delay(100);
+      if (digitalRead(PUL5) == LOW) {
+        SerialBT.write("Ñ");
+      } else{
+        SerialBT.write("N");
+      }
+    } else{
+      SerialBT.write("M");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 6:
+    delay(100);
+    if (digitalRead(PUL6) == LOW) {
+      delay(100);
+      if (digitalRead(PUL6) == LOW) {
+        SerialBT.write("Q");
+      } else{
+        SerialBT.write("P");
+      }
+    } else{
+      SerialBT.write("O");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 7:
+    delay(100);
+    if (digitalRead(PUL7) == LOW) {
+      delay(100);
+      if (digitalRead(PUL7) == LOW) {
+        SerialBT.write("T");
+      } else{
+        SerialBT.write("S");
+      }
+    } else{
+      SerialBT.write("R");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 8:
+    delay(100);
+    if (digitalRead(PUL9) == LOW) {
+      delay(100);
+      if (digitalRead(PUL9) == LOW) {
+        SerialBT.write("W");
+      } else{
+        SerialBT.write("V");
+      }
+    } else{
+      SerialBT.write("U");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 9:
+    delay(100);
+    if (digitalRead(PUL9) == LOW) {
+      delay(100);
+      if (digitalRead(PUL9) == LOW) {
+        SerialBT.write("Z");
+      } else{
+        SerialBT.write("Y");
+      }
+    } else{
+      SerialBT.write("X");
+    }
+
+    //Usar vectores y guardar las letras en un string para mostrarlo en pantalla (o ir mostrando uno por uno directamente)
+
+    
+    break;
+  case 10:
+    SerialBT.write(" ");
+    break;
+  case 11:
+    SerialBT.write("enviar");
+    break;
+  case 12:
+    SerialBT.write("borrar");
+    break;
+  }
+
+}
+
+
+
+void letraA(){
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+}
+void letraB(){
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+  delay(200);
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+}
+void letraC(){
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+  delay(200);
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+  delay(200);
+  digitalWrite(VIB1, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+}
+void letraD(){
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+}
+void letraE(){
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+  delay(200);
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+}
+void letraF(){
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+  delay(200);
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+  delay(200);
+  digitalWrite(VIB2, HIGH);
+  delay(200);
+  digitalWrite(VIB2, LOW);
+}
+void letraG(){
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+}
+void letraH(){
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+  delay(200);
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+}
+void letraI(){
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+  delay(200);
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+  delay(200);
+  digitalWrite(VIB3, HIGH);
+  delay(200);
+  digitalWrite(VIB3, LOW);
+}
+void letraJ(){
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+}
+void letraK(){
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+  delay(200);
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+}
+void letraL(){
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+  delay(200);
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+  delay(200);
+  digitalWrite(VIB4, HIGH);
+  delay(200);
+  digitalWrite(VIB4, LOW);
+}
+void letraM(){
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+}
+void letraN(){
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+  delay(200);
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+}
+void letraNI(){
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+  delay(200);
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+  delay(200);
+  digitalWrite(VIB5, HIGH);
+  delay(200);
+  digitalWrite(VIB5, LOW);
+}
+void letraO(){
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+}
+void letraP(){
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+  delay(200);
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+}
+void letraQ(){
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+  delay(200);
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+  delay(200);
+  digitalWrite(VIB6, HIGH);
+  delay(200);
+  digitalWrite(VIB6, LOW);
+}
+void letraR(){
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+}
+void letraS(){
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+  delay(200);
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+}
+void letraT(){
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+  delay(200);
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+  delay(200);
+  digitalWrite(VIB7, HIGH);
+  delay(200);
+  digitalWrite(VIB7, LOW);
+}
+void letraU(){
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+}
+void letraV(){
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+  delay(200);
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+}
+void letraW(){
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+  delay(200);
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+  delay(200);
+  digitalWrite(VIB8, HIGH);
+  delay(200);
+  digitalWrite(VIB8, LOW);
+}
+void letraX(){
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+}
+void letraY(){
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+  delay(200);
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+}
+void letraZ(){
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+  delay(200);
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+  delay(200);
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB9, LOW);
+}
+void espacio(){
+  digitalWrite(VIB1, HIGH);
+  digitalWrite(VIB2, HIGH);
+  digitalWrite(VIB3, HIGH);
+  digitalWrite(VIB4, HIGH);
+  digitalWrite(VIB5, HIGH);
+  digitalWrite(VIB6, HIGH);
+  digitalWrite(VIB7, HIGH);
+  digitalWrite(VIB8, HIGH);
+  digitalWrite(VIB9, HIGH);
+  delay(200);
+  digitalWrite(VIB1, LOW);
+  digitalWrite(VIB2, LOW);
+  digitalWrite(VIB3, LOW);
+  digitalWrite(VIB4, LOW);
+  digitalWrite(VIB5, LOW);
+  digitalWrite(VIB6, LOW);
+  digitalWrite(VIB7, LOW);
+  digitalWrite(VIB8, LOW);
+  digitalWrite(VIB9, LOW);
+}
