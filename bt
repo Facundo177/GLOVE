@@ -1,0 +1,228 @@
+#include "BluetoothSerial.h"
+
+#define MAX_STRING_LENGTH 100
+
+//#define USE_PIN // Uncomment this to use PIN during pairing. The pin is specified on the line below
+//const char *pin = "1234"; // Change this to more secure PIN.
+String device_name = "ESP32-BT-Slave";
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+#if !defined(CONFIG_BT_SPP_ENABLED)
+#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+#endif
+
+BluetoothSerial SerialBT;
+
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin(device_name); //Bluetooth device name
+  Serial.printf("The device with name \"%s\" is started.\nNow you can pair it with Bluetooth!\n", device_name.c_str());
+
+  //Serial.printf("The device with name \"%s\" and MAC address %s is started.\nNow you can pair it with Bluetooth!\n", device_name.c_str(), SerialBT.getMacString()); // Use this after the MAC method is implemented
+  #ifdef USE_PIN
+    SerialBT.setPin(pin);
+    Serial.println("Using PIN");
+  #endif
+}
+
+void loop() {
+  // Lo que se escribe en el monitor serial se envía al celular   
+  if (Serial.available()) {
+    SerialBT.write(Serial.read());
+  }
+
+  char inputString[MAX_STRING_LENGTH];
+  int index = 0;
+
+  // Lo que se ecribe en el celular se separa letra por letra y se muestra en el monitor serial
+  while (SerialBT.available() && index < MAX_STRING_LENGTH - 1) {
+    // Delay to allow byte to arrive
+    delay(5);
+
+    // Read the incoming byte
+    char incomingByte = SerialBT.read();
+
+    // Add incoming byte to string
+    inputString[index] = incomingByte;
+    index++;
+  }
+
+  // Null-terminate the string
+  inputString[index] = '\0';
+
+  // If string is not empty, print each character on a new line
+  if (index > 0) {
+    for (int i = 0; i < index; i++) {
+      //Serial.println(inputString[i]);
+
+      char letra = inputString[i];
+      //int num = inputString[i];
+      //Serial.println(num);
+      
+
+      if (letra == 'a' || letra == 'A' || letra == 161 /*'á'*/ || letra == 129 /*'Á'*/) {
+        letraVibradores(1);
+      } else if (letra == 'b' || letra == 'B'){
+        letraVibradores(2);
+      } else if (letra == 'c' || letra == 'C'){
+        letraVibradores(3);
+      } else if (letra == 'd' || letra == 'D'){
+        letraVibradores(4);
+      } else if (letra == 'e' || letra == 'E' || letra == 169 /*'é'*/ || letra == 137 /*'É'*/) {
+        letraVibradores(5);
+      } else if (letra == 'f' || letra == 'F'){
+        letraVibradores(6);
+      } else if (letra == 'g' || letra == 'G'){
+        letraVibradores(7);
+      } else if (letra == 'h' || letra == 'H'){
+        letraVibradores(8);
+      } else if (letra == 'i' || letra == 'I' || letra == 173 /*'í'*/ || letra == 141 /*'Í'*/) {
+        letraVibradores(9);
+      } else if (letra == 'j' || letra == 'J'){
+        letraVibradores(10);
+      } else if (letra == 'k' || letra == 'K'){
+        letraVibradores(11);
+      } else if (letra == 'l' || letra == 'L'){
+        letraVibradores(12);
+      } else if (letra == 'm' || letra == 'M'){
+        letraVibradores(13);
+      } else if (letra == 'n' || letra == 'N'){
+        letraVibradores(14);
+      } else if (letra == 177 /*'ñ'*/ || letra == 145 /*'Ñ'*/){
+        letraVibradores(15);
+      } else if (letra == 'o' || letra == 'O' || letra == 179 /*'ó'*/ || letra == 147 /*'Ó'*/) {
+        letraVibradores(16);
+      } else if (letra == 'p' || letra == 'P'){
+        letraVibradores(17);
+      } else if (letra == 'q' || letra == 'Q'){
+        letraVibradores(18);
+      } else if (letra == 'r' || letra == 'R'){
+        letraVibradores(19);
+      } else if (letra == 's' || letra == 'S'){
+        letraVibradores(20);
+      } else if (letra == 't' || letra == 'T'){
+        letraVibradores(21);
+      } else if (letra == 'u' || letra == 'U' || letra == 186 /*'ú'*/ || letra == 154 /*'Ú'*/) {
+        letraVibradores(22);
+      } else if (letra == 'v' || letra == 'V'){
+        letraVibradores(23);
+      } else if (letra == 'w' || letra == 'W'){
+        letraVibradores(24);
+      } else if (letra == 'x' || letra == 'X'){
+        letraVibradores(25);
+      } else if (letra == 'y' || letra == 'Y'){
+        letraVibradores(26);
+      } else if (letra == 'z' || letra == 'Z'){
+        letraVibradores(27);
+      } else if (letra == 195){
+          
+      } else {
+        letraVibradores(28);  
+      }
+
+
+
+         
+    }
+    Serial.println(inputString);
+    
+  }  
+}
+
+
+
+
+
+
+void letraVibradores(int letra){
+  switch (letra){
+  case 1:
+    Serial.print("1 ");
+    break;
+  case 2:
+    Serial.print("2 ");
+    break;
+  case 3:
+    Serial.print("3 ");
+    break;
+  case 4:
+    Serial.print("4 ");
+    break;
+  case 5:
+    Serial.print("5 ");
+    break;
+  case 6:
+    Serial.print("6 ");
+    break;
+  case 7:
+    Serial.print("7 ");
+    break;
+  case 8:
+    Serial.print("8 ");
+    break;
+  case 9:
+    Serial.print("9 ");
+    break;
+  case 10:
+    Serial.print("10 ");
+    break;
+  case 11:
+    Serial.print("11 ");
+    break;
+  case 12:
+    Serial.print("12 ");
+    break;
+  case 13:
+    Serial.print("13 ");
+    break;
+  case 14:
+    Serial.print("14 ");
+    break;
+  case 15:
+    Serial.print("15 ");
+    break;
+  case 16:
+    Serial.print("16 ");
+    break;
+  case 17:
+    Serial.print("17 ");
+    break;
+  case 18:
+    Serial.print("18 ");
+    break;
+  case 19:
+    Serial.print("19 ");
+    break;
+  case 20:
+    Serial.print("20 ");
+    break;
+  case 21:
+    Serial.print("21 ");
+    break;
+  case 22:
+    Serial.print("22 ");
+    break;
+  case 23:
+    Serial.print("23 ");
+    break;
+  case 24:
+    Serial.print("24 ");
+    break;
+  case 25:
+    Serial.print("25 ");
+    break;
+  case 26:
+    Serial.print("26 ");
+    break;
+  case 27:
+    Serial.print("27 ");
+    break;
+  case 28:
+    Serial.print("/ ");
+    break;
+  }
+}
